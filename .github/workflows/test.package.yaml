@@ -66,3 +66,45 @@ jobs:
           ls -al ~/.aws
           cat  ~/.aws/config
           make test
+
+
+  test-local-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: AWS dummy config
+        run: |
+          hostname
+          mkdir -p ~/.aws
+          touch ~/.aws/config
+
+          echo "[default]" >> ~/.aws/config
+          echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/config
+          chmod 600 ~/.aws/config
+
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = dummy" >> ~/.aws/credentials
+          echo "aws_secret_access_key = dummy" >> ~/.aws/credentials
+          chmod 600 ~/.aws/credentials
+
+      - name: Setup DynamoDB Local
+        uses: rrainn/dynamodb-action@v2.0.0
+        with:
+          port: 8000
+          cors: '*'
+
+      - name: Create Table
+        run: |
+          aws dynamodb create-table --cli-input-json ./scripts/docker/awscli/test.json --endpoint-url http://localhost:8000
+
+      - name: Run test
+        run: |
+          go test -v ./app/... -count=1 -timeout 30s
+
