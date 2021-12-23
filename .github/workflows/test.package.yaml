@@ -38,7 +38,6 @@ jobs:
         run: |
           ls -al ~/.aws
           cat  ~/.aws/config
-          docker ps
           make test-local
 
   test-container:
@@ -66,5 +65,4 @@ jobs:
         run: |
           ls -al ~/.aws
           cat  ~/.aws/config
-          docker ps
           make test
