@@ -1,0 +1,68 @@
+name: Test
+
+on: push
+
+env:
+  GO_VERSION: 1.17.1
+  AWS_DEFAULT_REGION: us-east-1
+
+jobs:
+
+  test-local:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: AWS dummy config
+        run: |
+          hostname
+          mkdir -p ~/.aws
+          touch ~/.aws/config
+
+          echo "[default]" >> ~/.aws/config
+          echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/credentials
+          chmod 600 ~/.aws/config
+
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = dummy" >> ~/.aws/credentials
+          echo "aws_secret_access_key = dummy" >> ~/.aws/credentials
+          chmod 600 ~/.aws/credentials
+
+      - name: Test
+        run: |
+          ls -al ~/.aws
+          cat  ~/.aws/config
+          make test-local
+
+  test-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: AWS dummy config
+        run: |
+          hostname
+          mkdir -p ~/.aws
+          touch ~/.aws/config
+
+          echo "[default]" >> ~/.aws/config
+          echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/config
+          chmod 600 ~/.aws/config
+
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = dummy" >> ~/.aws/credentials
+          echo "aws_secret_access_key = dummy" >> ~/.aws/credentials
+          chmod 600 ~/.aws/credentials
+
+      - name: Test ${{ matrix.role }}
+        run: |
+          ls -al ~/.aws
+          cat  ~/.aws/config
+          make test
