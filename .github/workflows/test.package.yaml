@@ -43,7 +43,7 @@ jobs:
       - name: Create Table
         run: |
           PWD=pwd
-          aws dynamodb create-table --cli-input-json file:/${PWD}/scripts/docker/awscli/test.json --endpoint-url http://localhost:8000
+          aws dynamodb create-table --cli-input-json file://./scripts/docker/awscli/test.json --endpoint-url http://localhost:8000
 
       - name: Run test
         run: |
