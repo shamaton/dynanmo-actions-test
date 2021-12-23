@@ -22,7 +22,7 @@ test:
 test-local:
 	docker-compose $(DEFAULT_FILE) up --detach $(AWS_SERVICES)
 	until [ "`ls -al ./tmp/docker/awscli/ | grep stamp | wc -l`"=="1" ]; do sleep 1; done;
-	go test -v ./app/... -count=1
+	go test -v ./app/... -count=1 -timeout 30s
 	docker-compose down
 
 clean:
