@@ -1,0 +1,27 @@
+{
+  "TableName": "test_test_test",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "col1",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "col2",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "KeyType": "HASH",
+      "AttributeName": "col1"
+    },
+    {
+      "KeyType": "RANGE",
+      "AttributeName": "col2"
+    }
+  ],
+  "ProvisionedThroughput": {
+    "WriteCapacityUnits": 5,
+    "ReadCapacityUnits": 5
+  }
+}

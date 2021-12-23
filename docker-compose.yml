@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: run
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+    environment:
+      DYNAMO_ENDPOINT: "http://dynamodb:8000"
+    volumes:
+      - ~/.aws/:/root/.aws/:ro
+    ports:
+      - "8080:8080"
+    tty: true
+
+  dynamodb:
+    image: amazon/dynamodb-local:1.17.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./tmp/docker/dynamodb:/home/dynamodblocal/data
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
+    healthcheck:
+      test: curl -s http://localhost:8000
+
+  awscli:
+    image: amazon/aws-cli:2.2.46
+    entrypoint: [ "" ]
+    environment:
+      DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
+      STAMP_PATH: "/stamp"
+      NO_PROXY: "dynamodb:8000"
+    volumes:
+      - ~/.aws/:/root/.aws/:ro
+      - ./scripts/docker/awscli:/scripts:ro
+      - ./tmp/docker/awscli:/stamp
+    command:
+      - /scripts/init.sh
+    depends_on:
+      dynamodb:
+        condition: service_healthy
