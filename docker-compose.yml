@@ -21,9 +21,9 @@ services:
     image: amazon/dynamodb-local:1.17.0
     ports:
       - "8000:8000"
-#    volumes:
-#      - ./tmp/docker/dynamodb:/home/dynamodblocal/data
-    command: -jar DynamoDBLocal.jar -sharedDb -dbPath .
+    volumes:
+      - ./tmp/docker/dynamodb:/home/dynamodblocal/data
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
     healthcheck:
       test: curl -s http://localhost:8000
 

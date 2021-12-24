@@ -120,6 +120,7 @@ jobs:
         run: |
           ls -al ~/.aws
           cat  ~/.aws/config
+          mkdir -p tmp/docker/dynamodb
           make test-local
 
   test-container:
@@ -150,6 +151,7 @@ jobs:
 
           export DYNAMO_HOST=`hostname -i`
           echo $DYNAMO_HOST
+          mkdir -p tmp/docker/dynamodb
           make test
 
 
