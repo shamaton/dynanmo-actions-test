@@ -17,7 +17,7 @@ test:
 	docker-compose $(DEFAULT_FILE) up --detach $(AWS_SERVICES)
 	until [ "`ls -al ./tmp/docker/awscli/ | grep stamp | wc -l`"=="1" ]; do sleep 1; done;
 	docker ps
-	docker-compose $(DEFAULT_FILE) -f ./app/docker-compose.ci.yml run app
+	docker-compose $(DEFAULT_FILE) -f ./app/docker-compose.ci.yml run --no-deps app
 	docker-compose down
 
 test-local:
