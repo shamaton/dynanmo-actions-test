@@ -23,7 +23,7 @@ services:
       - "8000:8000"
 #    volumes:
 #      - ./tmp/docker/dynamodb:/home/dynamodblocal/data
-    command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
+    command: -jar DynamoDBLocal.jar -sharedDb 
     healthcheck:
       test: curl -s http://localhost:8000
 
