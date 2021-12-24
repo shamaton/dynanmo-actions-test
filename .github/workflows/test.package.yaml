@@ -86,7 +86,7 @@ jobs:
           ls -al ~/.aws
           cat  ~/.aws/config
 
-          DYNAMO_HOST=`hostname -i`
+          export DYNAMO_HOST=`hostname -i`
           echo $DYNAMO_HOST
           docker-compose -f ./docker-compose.yml -f ./app/docker-compose.ci.yml run --no-deps app
 
@@ -148,7 +148,7 @@ jobs:
           ls -al ~/.aws
           cat  ~/.aws/config
 
-          DYNAMO_HOST=`hostname -i`
+          export DYNAMO_HOST=`hostname -i`
           echo $DYNAMO_HOST
           make test
 
