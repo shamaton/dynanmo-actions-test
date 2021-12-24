@@ -49,6 +49,47 @@ jobs:
         run: |
           go test -v ./app/... -count=1 -timeout 30s
 
+  test-container-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: AWS dummy config
+        run: |
+          hostname
+          mkdir -p ~/.aws
+          touch ~/.aws/config
+
+          echo "[default]" >> ~/.aws/config
+          echo "region = ${AWS_DEFAULT_REGION}" >> ~/.aws/config
+          chmod 600 ~/.aws/config
+
+          echo "[default]" >> ~/.aws/credentials
+          echo "aws_access_key_id = dummy" >> ~/.aws/credentials
+          echo "aws_secret_access_key = dummy" >> ~/.aws/credentials
+          chmod 600 ~/.aws/credentials
+
+      - name: Setup DynamoDB Local
+        uses: rrainn/dynamodb-action@v2.0.0
+        with:
+          port: 8000
+          cors: '*'
+
+      - name: Create Table
+        run: |
+          PWD=pwd
+          aws dynamodb create-table --cli-input-json file://./scripts/docker/awscli/test.json --endpoint-url http://localhost:8000
+
+      - name: Run test
+        run: |
+          ls -al ~/.aws
+          cat  ~/.aws/config
+
+          DYNAMO_HOST=`hostname -i`
+          echo $DYNAMO_HOST
+          make test
+
   test-local:
     runs-on: ubuntu-latest
     steps:
@@ -102,12 +143,12 @@ jobs:
           echo "aws_secret_access_key = dummy" >> ~/.aws/credentials
           chmod 600 ~/.aws/credentials
 
-      - name: Test ${{ matrix.role }}
+      - name: Test
         run: |
           ls -al ~/.aws
           cat  ~/.aws/config
 
-          DYNAMO_HOST=`ifconfig en0 | grep inet | grep -v inet6 | sed -E "s/inet ([0-9]{1,3}.[0-9]{1,3}.[0-9].{1,3}.[0-9]{1,3}) .*$/\1/" | tr -d "\t"`
+          DYNAMO_HOST=`hostname -i`
           echo $DYNAMO_HOST
           make test
 
