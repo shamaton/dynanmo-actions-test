@@ -9,7 +9,7 @@ services:
       dynamodb:
         condition: service_healthy
     environment:
-      DYNAMO_ENDPOINT: "http://dynamodb:8000"
+      DYNAMO_ENDPOINT: "http://${DYNAMO_HOST:-dynamodb}:8000"
       NO_PROXY: "dynamodb:8000"
     volumes:
       - ~/.aws/:/root/.aws/:ro
