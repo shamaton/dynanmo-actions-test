@@ -121,7 +121,9 @@ jobs:
           ls -al ~/.aws
           cat  ~/.aws/config
           mkdir -p tmp/docker/dynamodb
+          mkdir -p tmp/docker/awscli
           chmod 777 tmp/docker/dynamodb
+          chmod 777 tmp/docker/awscli
           make test-local
 
   test-container:
@@ -151,7 +153,9 @@ jobs:
           cat  ~/.aws/config
 
           mkdir -p tmp/docker/dynamodb
+          mkdir -p tmp/docker/awscli
           chmod 777 tmp/docker/dynamodb
+          chmod 777 tmp/docker/awscli
           make test
 
 
